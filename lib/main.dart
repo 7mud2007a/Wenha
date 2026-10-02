@@ -375,6 +375,38 @@ class ReportDetailsScreen extends StatelessWidget {
   Widget _info(String a,String b)=>Padding(padding:const EdgeInsets.only(bottom:10),child:Row(children:[SizedBox(width:90,child:Text(a,style:const TextStyle(fontWeight:FontWeight.w700))),Expanded(child:Text(b))]));
 }
 
+
+class HandoverScreen extends StatelessWidget {
+  const HandoverScreen({super.key});
+  @override Widget build(BuildContext context){
+    return Directionality(
+      textDirection:TextDirection.rtl,
+      child:Scaffold(
+        appBar:AppBar(title:const Text('تأكيد التسليم'),backgroundColor:WenhaApp.beige,foregroundColor:WenhaApp.green),
+        body:Padding(
+          padding:const EdgeInsets.all(22),
+          child:Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
+            const Icon(Icons.handshake_outlined,size:80,color:WenhaApp.green),
+            const SizedBox(height:18),
+            const Text('تم الاتفاق على التسليم باليد؟',textAlign:TextAlign.center,style:TextStyle(fontSize:23,fontWeight:FontWeight.w800,color:WenhaApp.green)),
+            const SizedBox(height:12),
+            const Text('بعد استلام الغرض، يمكن للطرفين تأكيد إتمام التسليم.'),
+            const Spacer(),
+            SizedBox(height:52,child:ElevatedButton(
+              onPressed:()=>showDialog(context:context,builder:(_)=>AlertDialog(
+                title:const Text('تم التسليم'),
+                content:const Text('تم تسجيل تأكيد التسليم بنجاح.'),
+                actions:[TextButton(onPressed:()=>Navigator.pop(context),child:const Text('تمام'))],
+              )),
+              child:const Text('تأكيد استلام الغرض'),
+            )),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
   @override State<ChatScreen> createState()=>_ChatScreenState();
