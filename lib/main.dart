@@ -89,7 +89,7 @@ class HomeScreen extends StatelessWidget {
                       icon: Icons.search,
                       title: 'دوّر على شي',
                       color: WenhaApp.green,
-                      onTap: () {},
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReportScreen(type: 'lost'))),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -98,7 +98,7 @@ class HomeScreen extends StatelessWidget {
                       icon: Icons.add_circle_outline,
                       title: 'شي ضاع مني',
                       color: WenhaApp.burgundy,
-                      onTap: () {},
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReportScreen(type: 'found'))),
                     ),
                   ),
                 ],
@@ -210,4 +210,95 @@ class _EmptyReports extends StatelessWidget {
       ),
     );
   }
+}
+
+
+class ReportScreen extends StatefulWidget {
+  const ReportScreen({super.key, required this.type});
+  final String type;
+
+  @override
+  State<ReportScreen> createState() => _ReportScreenState();
+}
+
+class _ReportScreenState extends State<ReportScreen> {
+  final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final secretController = TextEditingController();
+  String category = 'موبايل';
+  String governorate = 'دمشق';
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    descriptionController.dispose();
+    secretController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isLost = widget.type == 'lost';
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(isLost ? 'بلاغ عن غرض ضايع' : 'بلاغ عن غرض لقيته'),
+          backgroundColor: WenhaApp.beige,
+          foregroundColor: WenhaApp.green,
+        ),
+        body: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            Text(isLost ? 'شو ضاع منك؟' : 'شو لقيت؟', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800, color: WenhaApp.green)),
+            const SizedBox(height: 18),
+            _field(titleController, 'اسم الغرض', 'مثلاً: آيفون، محفظة، مفاتيح...'),
+            const SizedBox(height: 14),
+            DropdownButtonFormField<String>(
+              value: category,
+              decoration: _decoration('التصنيف'),
+              items: const ['موبايل', 'محفظة', 'مفاتيح', 'وثائق', 'حقيبة', 'إلكترونيات', 'أخرى']
+                  .map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              onChanged: (v) => setState(() => category = v ?? category),
+            ),
+            const SizedBox(height: 14),
+            DropdownButtonFormField<String>(
+              value: governorate,
+              decoration: _decoration('المحافظة'),
+              items: const ['دمشق', 'ريف دمشق', 'حلب', 'حمص', 'حماة', 'اللاذقية', 'طرطوس', 'إدلب', 'درعا', 'السويداء', 'دير الزور', 'الرقة', 'الحسكة']
+                  .map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              onChanged: (v) => setState(() => governorate = v ?? governorate),
+            ),
+            const SizedBox(height: 14),
+            _field(descriptionController, 'الوصف', 'اكتب تفاصيل تساعد على تمييز الغرض', maxLines: 4),
+            const SizedBox(height: 14),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(color: WenhaApp.beige.withValues(alpha: .45), borderRadius: BorderRadius.circular(14)),
+              child: const Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Icon(Icons.lock_outline, color: WenhaApp.green), SizedBox(width: 10),
+                Expanded(child: Text('تفصيل تحقق سري: اكتب معلومة لا تظهر للناس، نستخدمها لاحقاً للتأكد من الملكية.')),
+              ]),
+            ),
+            const SizedBox(height: 10),
+            _field(secretController, 'تفصيل التحقق السري', 'مثلاً: خدش مخفي أو محتوى خاص', maxLines: 2),
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              style: FilledButton.styleFrom(backgroundColor: isLost ? WenhaApp.burgundy : WenhaApp.green, padding: const EdgeInsets.symmetric(vertical: 16)),
+              onPressed: () {
+                if (titleController.text.trim().isEmpty) return;
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم تجهيز البلاغ — الربط مع قاعدة البيانات بالخطوة القادمة.')));
+              },
+              icon: const Icon(Icons.check),
+              label: const Text('نشر البلاغ', style: TextStyle(fontWeight: FontWeight.w800)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  InputDecoration _decoration(String label) => InputDecoration(labelText: label, filled: true, fillColor: Colors.white, border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none));
+
+  Widget _field(TextEditingController controller, String label, String hint, {int maxLines = 1}) => TextField(controller: controller, maxLines: maxLines, decoration: _decoration(label).copyWith(hintText: hint));
 }
