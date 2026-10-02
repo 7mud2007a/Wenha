@@ -109,7 +109,7 @@ class HomeScreen extends StatelessWidget {
                 title: 'لقيت شي',
                 color: WenhaApp.green,
                 wide: true,
-                onTap: () {},
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchScreen())),
               ),
               const SizedBox(height: 28),
               Text(
@@ -301,4 +301,46 @@ class _ReportScreenState extends State<ReportScreen> {
   InputDecoration _decoration(String label) => InputDecoration(labelText: label, filled: true, fillColor: Colors.white, border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none));
 
   Widget _field(TextEditingController controller, String label, String hint, {int maxLines = 1}) => TextField(controller: controller, maxLines: maxLines, decoration: _decoration(label).copyWith(hintText: hint));
+}
+
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
+  @override State<SearchScreen> createState() => _SearchScreenState();
+}
+class _SearchScreenState extends State<SearchScreen> {
+  final query = TextEditingController();
+  String type = 'الكل', category = 'الكل', governorate = 'الكل';
+  final items = const [
+    {'title':'آيفون أسود','type':'ضايع','category':'موبايل','gov':'دمشق','place':'المزة','date':'اليوم'},
+    {'title':'محفظة جلدية','type':'لقيته','category':'محفظة','gov':'حلب','place':'الجميلية','date':'أمس'},
+    {'title':'ربطة مفاتيح','type':'ضايع','category':'مفاتيح','gov':'حمص','place':'الحمرا','date':'منذ يومين'},
+  ];
+  @override void dispose(){ query.dispose(); super.dispose(); }
+  @override Widget build(BuildContext context) {
+    final results = items.where((x) {
+      final q = query.text.trim();
+      return (q.isEmpty || x['title']!.contains(q)) && (type=='الكل'||x['type']==type) && (category=='الكل'||x['category']==category) && (governorate=='الكل'||x['gov']==governorate);
+    }).toList();
+    return Directionality(textDirection: TextDirection.rtl, child: Scaffold(
+      appBar: AppBar(title: const Text('دوّر على شي'), backgroundColor: WenhaApp.beige, foregroundColor: WenhaApp.green),
+      body: ListView(padding: const EdgeInsets.all(18), children: [
+        TextField(controller:query,onChanged:(_)=>setState((){}),decoration:InputDecoration(hintText:'اكتب اسم الغرض...',prefixIcon:const Icon(Icons.search),filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none))),
+        const SizedBox(height:14),
+        Wrap(spacing:8,children:['الكل','ضايع','لقيته'].map((v)=>ChoiceChip(label:Text(v),selected:type==v,onSelected:(_)=>setState(()=>type=v))).toList()),
+        const SizedBox(height:12),
+        DropdownButtonFormField<String>(value:category,decoration:_dec('التصنيف'),items:const ['الكل','موبايل','محفظة','مفاتيح','وثائق','حقيبة','إلكترونيات','أخرى'].map((e)=>DropdownMenuItem(value:e,child:Text(e))).toList(),onChanged:(v)=>setState(()=>category=v??category)),
+        const SizedBox(height:10),
+        DropdownButtonFormField<String>(value:governorate,decoration:_dec('المحافظة'),items:const ['الكل','دمشق','ريف دمشق','حلب','حمص','حماة','اللاذقية','طرطوس','إدلب','درعا','السويداء','دير الزور','الرقة','الحسكة'].map((e)=>DropdownMenuItem(value:e,child:Text(e))).toList(),onChanged:(v)=>setState(()=>governorate=v??governorate)),
+        const SizedBox(height:20),
+        Text('النتائج: ' + results.length.toString(),style:Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight:FontWeight.w800,color:WenhaApp.green)),
+        const SizedBox(height:8),
+        ...results.map((x)=>Card(elevation:0,margin:const EdgeInsets.only(bottom:10),child:ListTile(
+          leading:CircleAvatar(backgroundColor:WenhaApp.beige,child:Icon(Icons.inventory_2_outlined,color:WenhaApp.green)),
+          title:Text(x['title']!,style:const TextStyle(fontWeight:FontWeight.w800)),
+          subtitle:Text(x['type']!+' • '+x['category']!+'\n'+x['gov']!+' - '+x['place']!+' • '+x['date']!),isThreeLine:true,trailing:const Icon(Icons.chevron_left),
+        ))),
+      ]),
+    ));
+  }
+  InputDecoration _dec(String label)=>InputDecoration(labelText:label,filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none));
 }
