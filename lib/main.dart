@@ -337,10 +337,40 @@ class _SearchScreenState extends State<SearchScreen> {
         ...results.map((x)=>Card(elevation:0,margin:const EdgeInsets.only(bottom:10),child:ListTile(
           leading:CircleAvatar(backgroundColor:WenhaApp.beige,child:Icon(Icons.inventory_2_outlined,color:WenhaApp.green)),
           title:Text(x['title']!,style:const TextStyle(fontWeight:FontWeight.w800)),
-          subtitle:Text(x['type']!+' • '+x['category']!+'\n'+x['gov']!+' - '+x['place']!+' • '+x['date']!),isThreeLine:true,trailing:const Icon(Icons.chevron_left),
+          subtitle:Text(x['type']!+' • '+x['category']!+'\n'+x['gov']!+' - '+x['place']!+' • '+x['date']!),isThreeLine:true,onTap:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>ReportDetailsScreen(item:x))),
+          trailing:const Icon(Icons.chevron_left),
         ))),
       ]),
     ));
   }
   InputDecoration _dec(String label)=>InputDecoration(labelText:label,filled:true,fillColor:Colors.white,border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none));
+}
+
+class ReportDetailsScreen extends StatelessWidget {
+  final Map<String,String> item;
+  const ReportDetailsScreen({super.key,required this.item});
+  @override Widget build(BuildContext context){
+    return Directionality(textDirection:TextDirection.rtl,child:Scaffold(
+      appBar:AppBar(title:const Text('تفاصيل البلاغ'),backgroundColor:WenhaApp.beige,foregroundColor:WenhaApp.green),
+      body:ListView(padding:const EdgeInsets.all(18),children:[
+        Container(height:210,decoration:BoxDecoration(color:WenhaApp.beige,borderRadius:BorderRadius.circular(20)),child:Icon(Icons.inventory_2_outlined,size:90,color:WenhaApp.green)),
+        const SizedBox(height:18),
+        Text(item['title']!,style:const TextStyle(fontSize:25,fontWeight:FontWeight.w800,color:WenhaApp.green)),
+        const SizedBox(height:14),
+        _info('نوع البلاغ',item['type']!),
+        _info('التصنيف',item['category']!),
+        _info('المحافظة',item['gov']!),
+        _info('المنطقة',item['place']!),
+        _info('التاريخ',item['date']!),
+        const SizedBox(height:18),
+        Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(16)),child:const Text('معلومات التحقق الخاصة لا تظهر هنا. يتم استخدامها فقط للتأكد من ملكية الغرض عند المطابقة.',style:TextStyle(height:1.6))),
+        const SizedBox(height:22),
+        SizedBox(height:52,child:ElevatedButton.icon(
+          onPressed:()=>showDialog(context:context,builder:(_)=>AlertDialog(title:const Text('التواصل'),content:const Text('سيتم إضافة المحادثة داخل التطبيق بالخطوة التالية.'),actions:[TextButton(onPressed:()=>Navigator.pop(context),child:const Text('تمام'))])),
+          icon:const Icon(Icons.chat_bubble_outline),label:const Text('تواصل مع صاحب البلاغ'),
+        )),
+      ]),
+    ));
+  }
+  Widget _info(String a,String b)=>Padding(padding:const EdgeInsets.only(bottom:10),child:Row(children:[SizedBox(width:90,child:Text(a,style:const TextStyle(fontWeight:FontWeight.w700))),Expanded(child:Text(b))]));
 }
