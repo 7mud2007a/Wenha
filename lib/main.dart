@@ -366,11 +366,74 @@ class ReportDetailsScreen extends StatelessWidget {
         Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(16)),child:const Text('معلومات التحقق الخاصة لا تظهر هنا. يتم استخدامها فقط للتأكد من ملكية الغرض عند المطابقة.',style:TextStyle(height:1.6))),
         const SizedBox(height:22),
         SizedBox(height:52,child:ElevatedButton.icon(
-          onPressed:()=>showDialog(context:context,builder:(_)=>AlertDialog(title:const Text('التواصل'),content:const Text('سيتم إضافة المحادثة داخل التطبيق بالخطوة التالية.'),actions:[TextButton(onPressed:()=>Navigator.pop(context),child:const Text('تمام'))])),
+          onPressed:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>const ChatScreen())),
           icon:const Icon(Icons.chat_bubble_outline),label:const Text('تواصل مع صاحب البلاغ'),
         )),
       ]),
     ));
   }
   Widget _info(String a,String b)=>Padding(padding:const EdgeInsets.only(bottom:10),child:Row(children:[SizedBox(width:90,child:Text(a,style:const TextStyle(fontWeight:FontWeight.w700))),Expanded(child:Text(b))]));
+}
+
+class ChatScreen extends StatefulWidget {
+  const ChatScreen({super.key});
+  @override State<ChatScreen> createState()=>_ChatScreenState();
+}
+class _ChatScreenState extends State<ChatScreen>{
+  final controller=TextEditingController();
+  final messages=<String>['مرحبا، شفت البلاغ وحابب أتأكد من الغرض.'];
+  @override void dispose(){controller.dispose();super.dispose();}
+  @override Widget build(BuildContext context){
+    return Directionality(
+      textDirection:TextDirection.rtl,
+      child:Scaffold(
+        appBar:AppBar(title:const Text('المحادثة'),backgroundColor:WenhaApp.beige,foregroundColor:WenhaApp.green),
+        body:Column(children:[
+          Expanded(
+            child:ListView.builder(
+              padding:const EdgeInsets.all(16),
+              itemCount:messages.length,
+              itemBuilder:(context,i)=>Align(
+                alignment:Alignment.centerRight,
+                child:Container(
+                  margin:const EdgeInsets.only(bottom:10),
+                  padding:const EdgeInsets.all(12),
+                  decoration:BoxDecoration(color:WenhaApp.beige,borderRadius:BorderRadius.circular(14)),
+                  child:Text(messages[i]),
+                ),
+              ),
+            ),
+          ),
+          SafeArea(
+            child:Padding(
+              padding:const EdgeInsets.fromLTRB(12,6,12,12),
+              child:Row(children:[
+                Expanded(child:TextField(
+                  controller:controller,
+                  decoration:InputDecoration(
+                    hintText:'اكتب رسالة...',
+                    filled:true,
+                    fillColor:Colors.white,
+                    border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:BorderSide.none),
+                  ),
+                )),
+                const SizedBox(width:8),
+                IconButton(
+                  onPressed:(){
+                    if(controller.text.trim().isEmpty)return;
+                    setState((){
+                      messages.add(controller.text.trim());
+                      controller.clear();
+                    });
+                  },
+                  icon:const Icon(Icons.send),
+                  color:WenhaApp.green,
+                ),
+              ]),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
 }
