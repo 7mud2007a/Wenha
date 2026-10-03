@@ -193,18 +193,97 @@ class _HomeScreenState extends State<HomeScreen> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('وينها؟'),
+          title: const Text('وينها؟', style: TextStyle(fontWeight: FontWeight.w800)),
+          centerTitle: true,
+          backgroundColor: WenhaApp.beige,
+          foregroundColor: WenhaApp.green,
         ),
         body: Stack(
           children: [
-            const _HomeContent(),
+            SafeArea(
+              child: ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  const SizedBox(height: 12),
+                  Text(
+                    'ضايع منك شي؟',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: WenhaApp.green,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text('يمكن حدا لاقيه.'),
+                  const SizedBox(height: 24),
+                  TextField(
+                    decoration: InputDecoration(
+                      hintText: 'دوّر على غرض مفقود أو موجود...',
+                      prefixIcon: const Icon(Icons.search),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _ActionCard(
+                          icon: Icons.search,
+                          title: 'دوّر على شي',
+                          color: WenhaApp.green,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const SearchScreen()),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _ActionCard(
+                          icon: Icons.add_circle_outline,
+                          title: 'شي ضاع مني',
+                          color: WenhaApp.burgundy,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const ReportScreen(type: 'lost')),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  _ActionCard(
+                    icon: Icons.inventory_2_outlined,
+                    title: 'لقيت شي',
+                    color: WenhaApp.green,
+                    wide: true,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ReportScreen(type: 'found')),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  Text(
+                    'أحدث البلاغات',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: WenhaApp.green,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  const _EmptyReports(),
+                ],
+              ),
+            ),
             if (_showNetworkLoader)
               Positioned.fill(
                 child: Container(
                   color: const Color(0xFFFFFCF8).withOpacity(.92),
-                  child: const WenhaNetworkLoader(
-                    message: 'عم نحاول نتصل...',
-                  ),
+                  child: const WenhaNetworkLoader(message: 'عم نحاول نتصل...'),
                 ),
               ),
           ],
@@ -220,160 +299,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class _HomeContent extends StatelessWidget {
-  const _HomeContent();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
-        const SizedBox(height: 20),
-        Text(
-          'ضايع منك شي؟',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: WenhaApp.burgundy,
-                fontWeight: FontWeight.w800,
-              ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'يمكن حدا لاقيه.',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: WenhaApp.green,
-              ),
-        ),
-        const SizedBox(height: 24),
-        TextField(
-          textDirection: TextDirection.rtl,
-          decoration: InputDecoration(
-            hintText: 'دوّر على غرض...',
-            prefixIcon: const Icon(Icons.search),
-            filled: true,
-            fillColor: WenhaApp.beige.withOpacity(.45),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide.none,
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-        _actionCard(context, 'دوّر على شي', Icons.search),
-        _actionCard(context, 'شي ضاع مني', Icons.report_problem_outlined),
-        _actionCard(context, 'لقيت شي', Icons.pan_tool_alt_outlined),
-      ],
-    );
-  }
-
-  Widget _actionCard(BuildContext context, String title, IconData icon) {
-    return Card(
-      color: WenhaApp.beige.withOpacity(.55),
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        leading: Icon(icon, color: WenhaApp.burgundy),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
-        trailing: const Icon(Icons.chevron_left),
-      ),
-    );
-  }
-}
-
-
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'وينها؟',
-            style: TextStyle(fontWeight: FontWeight.w800),
-          ),
-          centerTitle: true,
-          backgroundColor: WenhaApp.beige,
-          foregroundColor: WenhaApp.green,
-        ),
-        body: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.all(20),
-            children: [
-              const SizedBox(height: 12),
-              Text(
-                'ضايع منك شي؟',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: WenhaApp.green,
-                    ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                'يمكن حدا لاقيه.',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Colors.black54,
-                    ),
-              ),
-              const SizedBox(height: 24),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'دوّر على غرض مفقود أو موجود...',
-                  prefixIcon: const Icon(Icons.search),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: _ActionCard(
-                      icon: Icons.search,
-                      title: 'دوّر على شي',
-                      color: WenhaApp.green,
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReportScreen(type: 'lost'))),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _ActionCard(
-                      icon: Icons.add_circle_outline,
-                      title: 'شي ضاع مني',
-                      color: WenhaApp.burgundy,
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReportScreen(type: 'found'))),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              _ActionCard(
-                icon: Icons.inventory_2_outlined,
-                title: 'لقيت شي',
-                color: WenhaApp.green,
-                wide: true,
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchScreen())),
-              ),
-              const SizedBox(height: 28),
-              Text(
-                'أحدث البلاغات',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: WenhaApp.green,
-                    ),
-              ),
-              const SizedBox(height: 12),
-              const _EmptyReports(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class _ActionCard extends StatelessWidget {
   const _ActionCard({
