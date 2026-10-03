@@ -1,4 +1,6 @@
-import 'dart:ui' as ui;\n\nimport 'package:flutter/material.dart';
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
 
 void main() {
   runApp(const WenhaApp());
