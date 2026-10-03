@@ -38,9 +38,17 @@ class WenhaApp extends StatelessWidget {
 // Uiverse jelly loader: the web build uses the original HTML/CSS/SVG filter.
 // Android/iOS use a native Flutter fallback with the same motion.
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
+  @override State<HomeScreen> createState()=>_HomeScreenState();
+}
+class _HomeScreenState extends State<HomeScreen> {
+  bool _showNetworkLoader=false;
+  Future<void> _demoNetworkWait() async {
+    setState(()=>_showNetworkLoader=true);
+    await Future.delayed(const Duration(seconds:3));
+    if(mounted) setState(()=>_showNetworkLoader=false);
+  }
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -52,7 +60,9 @@ class HomeScreen extends StatelessWidget {
           backgroundColor: WenhaApp.beige,
           foregroundColor: WenhaApp.green,
         ),
-        body: SafeArea(
+        body: Stack(
+          children: [
+            SafeArea(
               child: ListView(
                 padding: const EdgeInsets.all(20),
                 children: [
@@ -131,6 +141,21 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
+            if (_showNetworkLoader)
+              Positioned.fill(
+                child: Container(
+                  color: const Color(0xFFFAF3E1).withOpacity(.92),
+                  child: const WenhaNetworkLoader(message: 'عم نحاول نتصل...'),
+                ),
+              ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _demoNetworkWait,
+          backgroundColor: WenhaApp.burgundy,
+          foregroundColor: WenhaApp.beige,
+          child: const Icon(Icons.wifi),
+        ),
       ),
     );
   }
