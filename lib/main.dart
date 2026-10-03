@@ -9,9 +9,9 @@ void main() {
 class WenhaApp extends StatelessWidget {
   const WenhaApp({super.key});
 
-  static const burgundy = Color(0xFF6C151E);
-  static const green = Color(0xFF0F3D3A);
-  static const beige = Color(0xFFF5DABF);
+  static const burgundy = Color(0xFFFF6D1F);
+  static const green = Color(0xFF222222);
+  static const beige = Color(0xFFF5E7C6);
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +20,12 @@ class WenhaApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFFFFCF8),
+        scaffoldBackgroundColor: const Color(0xFFFAF3E1),
         colorScheme: ColorScheme.fromSeed(
           seedColor: burgundy,
           primary: burgundy,
           secondary: green,
-          surface: const Color(0xFFFFFCF8),
+          surface: const Color(0xFFFAF3E1),
         ),
         fontFamily: 'sans',
       ),
@@ -282,7 +282,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (_showNetworkLoader)
               Positioned.fill(
                 child: Container(
-                  color: const Color(0xFFFFFCF8).withOpacity(.92),
+                  color: const Color(0xFFFAF3E1).withOpacity(.92),
                   child: const WenhaNetworkLoader(message: 'عم نحاول نتصل...'),
                 ),
               ),
@@ -360,7 +360,7 @@ class _EmptyReports extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F0EA),
+        color: const Color(0xFFF5E7C6),
         borderRadius: BorderRadius.circular(18),
       ),
       child: const Column(
