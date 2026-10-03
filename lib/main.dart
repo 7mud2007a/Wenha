@@ -139,9 +139,11 @@ class WenhaNetworkLoader extends StatelessWidget {
   const WenhaNetworkLoader({
     super.key,
     this.message = 'عم نحاول نتصل...',
+    this.color = WenhaApp.burgundy,
   });
 
   final String message;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +153,7 @@ class WenhaNetworkLoader extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const JellyLoader(),
+            JellyLoader(color: color),
             const SizedBox(height: 14),
             Text(
               message,
