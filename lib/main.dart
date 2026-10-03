@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'dart:ui' as ui;\n\nimport 'package:flutter/material.dart';
 
 void main() {
   runApp(const WenhaApp());
@@ -28,6 +28,141 @@ class WenhaApp extends StatelessWidget {
         fontFamily: 'sans',
       ),
       home: const HomeScreen(),
+    );
+  }
+}
+
+
+class JellyLoader extends StatefulWidget {
+  const JellyLoader({
+    super.key,
+    this.color = WenhaApp.burgundy,
+    this.size = 40,
+  });
+
+  final Color color;
+  final double size;
+
+  @override
+  State<JellyLoader> createState() => _JellyLoaderState();
+}
+
+class _JellyLoaderState extends State<JellyLoader>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 800),
+  )..repeat();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: widget.size,
+      height: widget.size / 2,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, _) {
+          final phase = _controller.value;
+          final pulse = (phase < .5 ? phase : 1 - phase) * 2;
+          final offset = widget.size * .375 * pulse;
+          final scale = .65 + (.35 * (1 - pulse));
+
+          return Stack(
+            alignment: Alignment.center,
+            children: [
+              ImageFiltered(
+                imageFilter: ui.ImageFilter.blur(
+                  sigmaX: 4.5,
+                  sigmaY: 4.5,
+                ),
+                child: SizedBox(
+                  width: widget.size,
+                  height: widget.size / 2,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: widget.size * .25 - offset,
+                        top: 0,
+                        child: Transform.scale(
+                          scale: scale,
+                          child: _blob(),
+                        ),
+                      ),
+                      Positioned(
+                        left: widget.size * .25 + offset,
+                        top: 0,
+                        child: Transform.scale(
+                          scale: scale,
+                          child: _blob(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // Crisp center keeps the loader readable while the blurred
+              // blobs create the soft "jelly" ooze effect from the original.
+              Container(
+                width: widget.size * .22,
+                height: widget.size * .22,
+                decoration: BoxDecoration(
+                  color: widget.color,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _blob() {
+    return Container(
+      width: widget.size * .5,
+      height: widget.size * .5,
+      decoration: BoxDecoration(
+        color: widget.color,
+        shape: BoxShape.circle,
+      ),
+    );
+  }
+}
+
+class WenhaNetworkLoader extends StatelessWidget {
+  const WenhaNetworkLoader({
+    super.key,
+    this.message = 'عم نحاول نتصل...',
+  });
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const JellyLoader(),
+            const SizedBox(height: 14),
+            Text(
+              message,
+              style: const TextStyle(
+                color: WenhaApp.green,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
